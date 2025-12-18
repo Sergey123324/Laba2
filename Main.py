@@ -54,3 +54,27 @@ def main():
         print(f"{i}. {time}")
 
 
+class TestUTCTime(unittest.TestCase):
+    def test_valid_times(self):
+        valid = ["00:00:00", "23:59:59", "12:30:45Z", "12:30:45.123456Z"]
+        for time in valid:
+            self.assertTrue(UTC_PATTERN.fullmatch(time), f"Должно совпадать: {time}")
+
+    def test_invalid_times(self):
+        invalid = ["24:00:00", "12:60:00", "12:00:60", "12:00:00.1234567"]
+        for time in invalid:
+            self.assertIsNone(UTC_PATTERN.fullmatch(time), f"Не должно совпадать: {time}")
+
+    def test_find_in_text(self):
+        text = "Время: 14:30:00Z и 23:59:59.999"
+        results = UTCTimeParser.find_in_text(text)
+        self.assertEqual(len(results), 2)
+        self.assertIn("14:30:00Z", results)
+
+
+if __name__ == "__main__":
+    print("Запуск: 1 - программа, 2 - тесты")
+    if input("Выбор: ") == "2":
+        unittest.main(verbosity=2)
+    else:
+        main()
